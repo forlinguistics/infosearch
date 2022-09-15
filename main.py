@@ -9,6 +9,8 @@ import argparse
 
 
 def preproc(text):
+    """"Preprocesses given file and returns its words as a string."""
+
     morph = pymorphy2.MorphAnalyzer()
     segmenter = Segmenter()
     st = stopwords.words("russian")
@@ -22,12 +24,9 @@ def preproc(text):
     return (lemmatized_text)
 
 
-"""
-getting files and preprocessing them
-"""
-
-
 def make_corpus(path = '\\friends-data\\'):
+    """Creates corpus .txt file from files in stated directory."""
+
     corpus = []
     curr_dir = os.getcwd()
     i = 0
@@ -43,6 +42,8 @@ def make_corpus(path = '\\friends-data\\'):
 
 
 def get_index():
+    """Creates index from corpus and prints out answers to the homework questions."""
+
     with open('corpus.txt', 'r', encoding='UTF-8') as f:
         corpus = f.readlines()
     vectorizer = CountVectorizer(analyzer='word')
