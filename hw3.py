@@ -7,10 +7,10 @@ import pickle
 from scipy import sparse
 
 
-def preproc_bm25():
+def preproc_bm25(inp_file, matr_name, cv_name):
     """calculates matrices for further use in bm25 calculation"""
     corpus = []
-    with open('q_corpus.txt', encoding='UTF-8') as f:
+    with open(inp_file, encoding='UTF-8') as f:
         lines = f.readlines()
         for line in lines:
             corpus.append(line[:-1])
@@ -30,8 +30,8 @@ def preproc_bm25():
     B_1 = (k * (1 - b + b * len_d / avdl))
     for i, j in zip(A.nonzero()[0], A.nonzero()[1]):
         A[i, j] = A[i, j] / (tf[i, j] + B_1[i])
-    sparse.save_npz('matr', A, compressed=True)
-    with open('bm25.pk', 'wb') as fin:
+    sparse.save_npz(matr_name + '.npz', A, compressed=True)
+    with open(cv_name + '.pk', 'wb') as fin:
         pickle.dump(count_vectorizer, fin)
 
 
@@ -41,7 +41,7 @@ def bm25(query):
     vectorizer = pickle.load(open('bm25.pk', 'rb'))
     query_count_vec = vectorizer.transform([preproc(query)]).toarray()
     vec = matr @ query_count_vec.T
-    with open('questions.txt', encoding='UTF-8') as f:
+    with open('answers.txt', encoding='UTF-8') as f:
         answers = f.readlines()
     answers = np.array(answers)
     sorted_scores_indx = np.argsort(vec, axis=0)[::-1]
@@ -51,6 +51,7 @@ def bm25(query):
 
 
 if __name__ == '__main__':
+    #    preproc_bm25('a_corpus.txt', 'matr', 'bm25')
     print("Enter the query: ")
     inp_string = input()
     bm25(inp_string)
